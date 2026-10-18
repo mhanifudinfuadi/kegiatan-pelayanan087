@@ -1,9 +1,43 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import * as THREE from "three"
+import { supabase } from "@/lib/supabase"
 
 const codeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789(){}[]<>;:,._-+=!@#$%^&*|\\/\"'`~?"
+
+const defaultEventPhotos = [
+  "/images/kegiatan/ke1.svg",
+  "/images/kegiatan/ke2.svg",
+  "/images/kegiatan/ke3.svg",
+  "/images/kegiatan/ke4.svg",
+  "/images/kegiatan/ke5.svg",
+  "/images/kegiatan/ke6.svg",
+  "/images/kegiatan/ke7.svg",
+  "/images/kegiatan/ke8.svg",
+  "/images/kegiatan/ke9.svg",
+  "/images/kegiatan/ke10.svg",
+  "/images/kegiatan/ke11.svg",
+  "/images/kegiatan/ke12.svg",
+  "/images/kegiatan/ke13.svg",
+  "/images/kegiatan/ke14.svg",
+  "/images/kegiatan/ke15.svg",
+  "/images/kegiatan/ke16.svg",
+  "/images/kegiatan/ke17.svg",
+  "/images/kegiatan/ke18.svg",
+  "/images/kegiatan/ke19.svg",
+  "/images/kegiatan/ke20.svg",
+  "/images/kegiatan/ke21.svg",
+  "/images/kegiatan/ke22.svg",
+  "/images/kegiatan/ke23.svg",
+  "/images/kegiatan/ke24.svg",
+  "/images/kegiatan/ke25.svg",
+  "/images/kegiatan/ke26.svg",
+  "/images/kegiatan/ke27.svg",
+  "/images/kegiatan/ke28.svg",
+  "/images/kegiatan/ke29.svg",
+  "/images/kegiatan/ke30.svg",
+]
 
 export function CardScanner() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -11,6 +45,36 @@ export function CardScanner() {
   const scannerCanvasRef = useRef<HTMLCanvasElement>(null)
   const cardStreamRef = useRef<HTMLDivElement>(null)
   const cardLineRef = useRef<HTMLDivElement>(null)
+  const [eventPhotos, setEventPhotos] = useState<string[]>(defaultEventPhotos)
+
+  useEffect(() => {
+    fetchEventPhotos()
+  }, [])
+
+  const fetchEventPhotos = async () => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('kegiatan-images')
+        .list('', { limit: 100 })
+      
+      if (error) {
+        console.warn('Could not fetch Supabase images, using defaults:', error.message)
+        return
+      }
+      
+      if (data && data.length > 0) {
+        const photoUrls = data.map(item => {
+          const { publicUrl } = supabase.storage
+            .from('kegiatan-images')
+            .getPublicUrl(item.name)
+          return publicUrl
+        })
+        setEventPhotos(photoUrls)
+      }
+    } catch (err) {
+      console.warn('Error fetching event photos:', err)
+    }
+  }
 
   useEffect(() => {
     if (!cardLineRef.current || !particleCanvasRef.current || !scannerCanvasRef.current) return
@@ -289,14 +353,6 @@ export function CardScanner() {
 
         const normalCard = document.createElement("div")
         normalCard.className = "card card-normal"
-
-        const eventPhotos = [
-          "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=800&q=85",
-          "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=800&q=85",
-          "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=85",
-          "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=85",
-          "https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=800&q=85",
-        ]
 
         const slideshow = document.createElement("div")
         slideshow.className = "event-slideshow"

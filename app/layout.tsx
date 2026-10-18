@@ -38,6 +38,14 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         {children}
+        <div className="fixed bottom-4 right-4 z-50">
+          <a 
+            href="/admin/login" 
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-lg text-white text-sm font-medium shadow-lg transition"
+          >
+            Admin
+          </a>
+        </div>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

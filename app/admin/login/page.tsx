@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { signIn, signOut, getCurrentUser } from "@/lib/supabase"
 
